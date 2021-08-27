@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jardesc>
+    <jar path="/home/vinicius/hadoop-cluster/data/wordcount2/WordCount.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/brid/.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="true">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <folder path="/brid/src"/>
+        <file path="/brid/.classpath"/>
+        <javaElement handleIdentifier="=brid/src\/test\/java=/test=/true=/=/optional=/true=/=/maven.pomderived=/true=/"/>
+        <javaElement handleIdentifier="=brid/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/"/>
+        <file path="/brid/.project"/>
+        <folder path="/brid/target"/>
+        <file path="/brid/pom.xml"/>
+    </selectedElements>
+</jardesc>
