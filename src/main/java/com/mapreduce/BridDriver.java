@@ -4,7 +4,6 @@ import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -14,10 +13,13 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
 import com.helpers.ReadDataset;
+import com.mapreduce.grouping.PartitionDistanceGroupingComparator;
 import com.mapreduce.mapper.ForwardPartialResultsMapper;
 import com.mapreduce.mapper.RandomPartitionMapper;
+import com.mapreduce.partitioner.PartitionDistancePartitioner;
 import com.mapreduce.reducer.BridIntermediaryReducer;
 import com.mapreduce.reducer.BridReducer;
+import com.types.PartitionDistancePair;
 import com.types.TupleWritable;
 
 public class BridDriver extends Configured implements Tool {
@@ -48,8 +50,9 @@ public class BridDriver extends Configured implements Tool {
 			job.setJarByClass(BridDriver.class);
 			job.setMapperClass(RandomPartitionMapper.class);
 			job.setReducerClass(BridIntermediaryReducer.class);
-
-			job.setMapOutputKeyClass(IntWritable.class);
+			job.setPartitionerClass(PartitionDistancePartitioner.class);
+			job.setGroupingComparatorClass(PartitionDistanceGroupingComparator.class);
+			job.setMapOutputKeyClass(PartitionDistancePair.class);
 			job.setMapOutputValueClass(TupleWritable.class);
 
 			job.setOutputKeyClass(NullWritable.class);
@@ -74,9 +77,10 @@ public class BridDriver extends Configured implements Tool {
 			job2.setJarByClass(BridDriver.class);
 			job2.setMapperClass(ForwardPartialResultsMapper.class);
 			job2.setReducerClass(BridReducer.class);
-			job2.setMapOutputKeyClass(IntWritable.class);
+			job2.setMapOutputKeyClass(PartitionDistancePair.class);
 			job2.setMapOutputValueClass(TupleWritable.class);
-
+			job2.setPartitionerClass(PartitionDistancePartitioner.class);
+			job2.setGroupingComparatorClass(PartitionDistanceGroupingComparator.class);
 			job2.setOutputKeyClass(NullWritable.class);
 			job2.setOutputValueClass(Text.class);
 

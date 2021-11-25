@@ -2,8 +2,9 @@ package com.mapreduce.mapper;
 
 import java.io.IOException;
 import java.util.Random;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
+
+import com.types.PartitionDistancePair;
 import com.types.Tuple;
 import com.types.TupleWritable;
 
@@ -11,7 +12,7 @@ import com.types.TupleWritable;
  * Mapper com partionamento aleatório. 
  * Correspondente a fase de particionamento.
  */
-public class RandomPartitionMapper extends BaseMapper<Object, Text, IntWritable, TupleWritable> {
+public class RandomPartitionMapper extends BaseMapper<Object, Text, PartitionDistancePair, TupleWritable> {
 
 	private Random rand = new Random();
 
@@ -22,7 +23,10 @@ public class RandomPartitionMapper extends BaseMapper<Object, Text, IntWritable,
 		Double distance = metric.solve(record, query);
 		record.setDistance(distance);
 		int partitionId = rand.nextInt(this.numberPartitions);
+		PartitionDistancePair reducerKey = new PartitionDistancePair();
+		reducerKey.setDistance(distance);
+		reducerKey.setPartition(partitionId);
 		TupleWritable tupleWritable = new TupleWritable(record);
-		context.write(new IntWritable(partitionId), tupleWritable);
+		context.write(reducerKey, tupleWritable);
 	}
 }

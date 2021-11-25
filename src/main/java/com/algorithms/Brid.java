@@ -27,7 +27,6 @@ public class Brid {
 
 	public List<Tuple> search(Tuple sq, int k) {
 		List<Tuple> result = new ArrayList<>();
-        Collections.sort(this.dataset, new TupleComparator(sq, this.metric));
         int pos = 0;
         while(result.size() < k && pos < dataset.size()) {
             Tuple s = dataset.get(pos++);

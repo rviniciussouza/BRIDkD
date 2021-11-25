@@ -5,19 +5,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 
 import com.algorithms.Brid;
+import com.types.PartitionDistancePair;
 import com.types.Tuple;
 import com.types.TupleComparator;
 import com.types.TupleWritable;
 
-public class BridIntermediaryReducer extends BaseReducer<IntWritable, TupleWritable, NullWritable, Text> {
+public class BridIntermediaryReducer extends BaseReducer<PartitionDistancePair, TupleWritable, NullWritable, Text> {
 
 	@Override
-	public void reduce(IntWritable key, Iterable<TupleWritable> values, Context context)
+	public void reduce(PartitionDistancePair key, Iterable<TupleWritable> values, Context context)
 			throws IOException, InterruptedException {
 		List<Tuple> dataset = new ArrayList<>();
 		for (TupleWritable tuple : values) {
@@ -29,7 +29,6 @@ public class BridIntermediaryReducer extends BaseReducer<IntWritable, TupleWrita
 			dataset.add(copy);
 		}
 		System.out.println("Dataset size: " + dataset.size());
-		Collections.sort(dataset, new TupleComparator(this.query, this.metric));
 		Brid brid = new Brid(dataset, this.metric);
 		List<Tuple> result = brid.search(this.query, this.K);
 		for (Tuple tuple : result) {
