@@ -1,5 +1,7 @@
 package com.metrics;
 
-public interface Metric<T> {
-    public double solve(T s, T t);
+import com.types.Tuple;
+
+public interface Metric {
+	public double solve(Tuple s, Tuple t);
 }

@@ -1,33 +1,39 @@
 package com.algorithms;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
 import com.metrics.Metric;
 import com.types.Tuple;
+import com.types.TupleComparator;
 
-public class Brid<T extends Tuple> {
-    Metric<T> metric;
-    List<T> dataset;
+/**
+ * Implementação do algoritmo BRIDk.
+ * Dado um conjunto de dados de entrada e um objeto de consulta sq, esse algoritmo
+ * retorna o k vizinhos diversificados do objeto de consulta. 
+ */
+public class Brid {
+	Metric metric;
+	List<Tuple> dataset;
 
-    public Brid(List<T> dataset, Metric<T> metric) {
-        this.dataset = dataset;
-        this.metric = metric;
-    }
+	public Brid(List<Tuple> dataset, Metric metric) {
+		this.dataset = dataset;
+		this.metric = metric;
+	}
 
-    public Brid(Metric<T> metric) {
-        this.metric = metric;
-    }
+	public Brid(Metric metric) {
+		this.metric = metric;
+	}
 
-    public List<T> search(T sq, int k) {
-        List<T> result = new ArrayList<>();
-
+	public List<Tuple> search(Tuple sq, int k) {
+		List<Tuple> result = new ArrayList<>();
+        Collections.sort(this.dataset, new TupleComparator(sq, this.metric));
         int pos = 0;
         while(result.size() < k && pos < dataset.size()) {
-            T s = dataset.get(pos++);
+            Tuple s = dataset.get(pos++);
             boolean dominant = true;
-            for(T resultElement : result) {
-                if(this.strongInfluenceSet(resultElement, sq).contains(s)) {
+            for(Tuple resultElement : result) {
+                if(this.isStrongInfluence(resultElement, s, sq)) {
                     dominant = false;
                     break;
                 }
@@ -37,26 +43,26 @@ public class Brid<T extends Tuple> {
             }
         }
         return result;
-    }
+	}
 
-    public double influenceLevel(T s, T t) {
-        double dist = metric.solve(s, t);
-        if(dist == 0) return 1;
-        return (1/dist);
-    }
+	public double influenceLevel(Tuple s, Tuple t) {
+		double dist = metric.solve(s, t);
+		if (dist == 0) return Double.MAX_VALUE;
+		return (1 / dist);
+	}
 
-    public List<T> strongInfluenceSet(T s, T sq) {
-        List<T> set = new ArrayList<>();
-        for(T element : this.dataset) {
+	public List<Tuple> strongInfluenceSet(Tuple s, Tuple sq) {
+		List<Tuple> set = new ArrayList<>();
+        for(Tuple element : this.dataset) {
             if(this.isStrongInfluence(s, element, sq)) {
                 set.add(element);
             }
         }
         return set;
-    }
+	}
 
-    public Boolean isStrongInfluence(T s, T t, T sq) {
-        double influence_s_to_sq = this.influenceLevel(s, sq);
+	public Boolean isStrongInfluence(Tuple s, Tuple t, Tuple sq) {
+		double influence_s_to_sq = this.influenceLevel(s, sq);
         double influence_s_to_t = this.influenceLevel(s, t);
         double influence_sq_to_t = this.influenceLevel(sq, t);
 
@@ -64,7 +70,6 @@ public class Brid<T extends Tuple> {
             influence_s_to_t >= influence_s_to_sq
             && influence_s_to_t >= influence_sq_to_t
         );
-    }
-
+	}
 
 }

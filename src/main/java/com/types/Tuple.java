@@ -5,74 +5,71 @@ import java.util.List;
 
 public class Tuple {
 
-    protected long id;
-    protected String description;
-    protected List<Double> attributes;
-    protected Double distance;
-    protected String raw;
-    
-    public Tuple() {
-        attributes = new ArrayList<>();
-    }
+	protected Long id;
+	protected String description;
+	protected List<Double> attributes;
+	protected Double distance;
 
-    public Tuple(List<Double> attributes) {
-        this.attributes = attributes;
-    }
-    
-    public String attributesAsString() {
-    	String result = "";
-    	for(Double value : this.attributes) {
-    		result += value + " ";
-    	}
-    	return result.trim();
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Double getDistance() {
-        return distance;
-    }
-
-    public void setDistance(Double distance) {
-        this.distance = distance;
-    }
-
-    public void setAttributes(List<Double> attributes) {
-        this.attributes = attributes;
-    }
-
-    public List<Double> getAttributes() {
-        return this.attributes;
-    }
-
-    public void addAttribute(Double atr) {
-        this.attributes.add(atr);
-    }
-
-	public String getRaw() {
-		return raw;
+	public Tuple() {
+		attributes = new ArrayList<>();
 	}
 
-	public void setRaw(String raw) {
-		this.raw = raw;
+	public Tuple(List<Double> attributes) {
+		this.attributes = attributes;
 	}
-	
+
+	public String asString() {
+		StringBuilder result = new StringBuilder();
+		for (Double value : this.attributes) {
+			result.append(" " + value);
+		}
+		return result.toString().trim();
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Double getDistance() {
+		return distance;
+	}
+
+	public void setDistance(Double distance) {
+		this.distance = distance;
+	}
+
+	public void setAttributes(List<Double> attributes) {
+		this.attributes = attributes;
+	}
+
+	public List<Double> getAttributes() {
+		return this.attributes;
+	}
+
+	public void addAttribute(Double atr) {
+		this.attributes.add(atr);
+	}
+
 	@Override
 	public String toString() {
-		return this.raw;
+		StringBuilder result = new StringBuilder();
+		if(this.id != null) result.append(Long.toString(this.id) + "\t");
+		for (Double value : this.attributes) {
+			result.append(value + "\t");
+		}
+		if(this.description != null && !this.description.isEmpty()) result.append(this.description);
+		return result.toString().trim();
 	}
 }
