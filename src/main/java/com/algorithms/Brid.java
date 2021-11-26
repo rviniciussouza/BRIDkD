@@ -1,11 +1,9 @@
 package com.algorithms;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import com.metrics.Metric;
 import com.types.Tuple;
-import com.types.TupleComparator;
 
 /**
  * Implementação do algoritmo BRIDk.

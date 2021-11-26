@@ -2,16 +2,12 @@ package com.mapreduce.reducer;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
-
 import com.algorithms.Brid;
 import com.types.PartitionDistancePair;
 import com.types.Tuple;
-import com.types.TupleComparator;
 import com.types.TupleWritable;
 
 public class BridIntermediaryReducer extends BaseReducer<PartitionDistancePair, TupleWritable, NullWritable, Text> {
@@ -28,7 +24,6 @@ public class BridIntermediaryReducer extends BaseReducer<PartitionDistancePair, 
 			copy.setAttributes(tuple.getAttributes());
 			dataset.add(copy);
 		}
-		System.out.println("Dataset size: " + dataset.size());
 		Brid brid = new Brid(dataset, this.metric);
 		List<Tuple> result = brid.search(this.query, this.K);
 		for (Tuple tuple : result) {

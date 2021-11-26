@@ -1,0 +1,18 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "java",
+			"targetPath": "/home/vinicius/hadoop-cluster/data/apps/${workspaceFolderBasename}.jar",
+			"elements": [
+				"${compileOutput}",
+			],
+			"problemMatcher": [],
+			"label": "java: exportjar:bridk_distributed",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+	]
+}

@@ -48,11 +48,11 @@ public class ParserTuple {
             return tuple;
         }
         catch(NullPointerException nullPointerException) {
-            System.out.println("A string passada como parâmetro não está no formado esperado.");
+            System.err.println("A string passada como parâmetro não está no formado esperado.");
             throw nullPointerException;
         }
         catch(NumberFormatException numberFormatException) {
-            System.out.println("Alguns valores da string não podem ser tratados.");
+            System.err.println("Alguns valores da string não podem ser tratados.");
             throw numberFormatException;
         }
     }

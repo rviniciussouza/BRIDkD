@@ -14,8 +14,8 @@ import org.apache.hadoop.util.ToolRunner;
 
 import com.helpers.ReadDataset;
 import com.mapreduce.grouping.PartitionDistanceGroupingComparator;
+import com.mapreduce.mapper.BasedPivotPartitionMapper;
 import com.mapreduce.mapper.ForwardPartialResultsMapper;
-import com.mapreduce.mapper.RandomPartitionMapper;
 import com.mapreduce.partitioner.PartitionDistancePartitioner;
 import com.mapreduce.reducer.BridIntermediaryReducer;
 import com.mapreduce.reducer.BridReducer;
@@ -43,12 +43,13 @@ public class BridDriver extends Configured implements Tool {
 			conf.set("header_dataset", args[3]);
 			conf.set("K", args[4]);
 			conf.set("number_partitions", args[6]);
+			conf.set("path_file_pivots", args[7]);
 			System.out.println("Iniciando fase de partionamento");
 			System.out.println("Consulta: " + consulta); 
 
 			Job job = Job.getInstance(conf, "Brid_k_phase_one");
 			job.setJarByClass(BridDriver.class);
-			job.setMapperClass(RandomPartitionMapper.class);
+			job.setMapperClass(BasedPivotPartitionMapper.class);
 			job.setReducerClass(BridIntermediaryReducer.class);
 			job.setPartitionerClass(PartitionDistancePartitioner.class);
 			job.setGroupingComparatorClass(PartitionDistanceGroupingComparator.class);

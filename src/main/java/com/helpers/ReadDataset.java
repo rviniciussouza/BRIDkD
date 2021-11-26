@@ -14,8 +14,12 @@ public class ReadDataset {
 	private Scanner scanner;
 
 	public ReadDataset(String pathname) throws FileNotFoundException {
-		this.file = new File(pathname);
-		this.scanner = new Scanner(file);
+		try {
+			this.file = new File(pathname);
+			this.scanner = new Scanner(file);
+		} catch(FileNotFoundException e) {
+			throw new FileNotFoundException("Não foi possível localizar arquivo " + pathname);
+		}
 	}
 
 	public String nextLine() throws NoSuchElementException {

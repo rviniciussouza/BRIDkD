@@ -2,14 +2,12 @@ package com.mapreduce.reducer;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import com.algorithms.Brid;
 import com.types.PartitionDistancePair;
 import com.types.Tuple;
-import com.types.TupleComparator;
 import com.types.TupleWritable;
 
 public class BridReducer extends BaseReducer<PartitionDistancePair, TupleWritable, NullWritable, Text> {
