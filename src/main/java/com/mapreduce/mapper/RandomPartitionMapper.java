@@ -20,7 +20,7 @@ public class RandomPartitionMapper extends BaseMapper<Object, Text, PartitionDis
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 		Tuple record = new Tuple();
 		record = parserRecords.parse(value.toString());
-		Double distance = metric.solve(record, query);
+		Double distance = metric.distance(record, query);
 		record.setDistance(distance);
 		int partitionId = rand.nextInt(this.numberPartitions);
 		PartitionDistancePair reducerKey = new PartitionDistancePair();

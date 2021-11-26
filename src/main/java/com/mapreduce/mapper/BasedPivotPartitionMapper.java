@@ -35,7 +35,7 @@ public class BasedPivotPartitionMapper extends BaseMapper<Object, Text, Partitio
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 		Tuple record = new Tuple();
 		record = parserRecords.parse(value.toString());
-		Double distance = metric.solve(record, query);
+		Double distance = metric.distance(record, query);
 		record.setDistance(distance);
 		int partitionId = this.getIndexClosestPivot(record);
 		PartitionDistancePair reducerKey = new PartitionDistancePair();
@@ -59,7 +59,7 @@ public class BasedPivotPartitionMapper extends BaseMapper<Object, Text, Partitio
         Double current_distance = Double.MAX_VALUE;
         for(int i = 0; i < this.pivots.size(); i++) {
             Tuple pivot = pivots.get(i);
-            Double distance = metric.solve(pivot, tuple);
+            Double distance = metric.distance(pivot, tuple);
             if(distance < current_distance) {
                 index_closest_pivot = i;
                 current_distance = distance;

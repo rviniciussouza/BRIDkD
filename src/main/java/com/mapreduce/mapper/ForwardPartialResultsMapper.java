@@ -22,7 +22,7 @@ public class ForwardPartialResultsMapper extends BaseMapper<Object, Text, Partit
 		Tuple record = new Tuple();
 		String line = value.toString().trim();
 		record = parserRecords.parse(line);
-		Double distance = metric.solve(record, query);
+		Double distance = metric.distance(record, query);
 		record.setDistance(distance);
 		PartitionDistancePair reducerKey = new PartitionDistancePair();
 		reducerKey.setDistance(distance);

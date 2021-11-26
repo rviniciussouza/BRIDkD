@@ -43,7 +43,7 @@ public class Brid {
 	}
 
 	public double influenceLevel(Tuple s, Tuple t) {
-		double dist = metric.solve(s, t);
+		double dist = metric.distance(s, t);
 		if (dist == 0) return Double.MAX_VALUE;
 		return (1 / dist);
 	}

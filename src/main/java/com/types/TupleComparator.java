@@ -15,8 +15,8 @@ public class TupleComparator implements Comparator<Tuple> {
 
 	@Override
 	public int compare(Tuple a, Tuple b) {
-		double dist_a = metric.solve(a, reference);
-		double dist_b = metric.solve(b, reference);
+		double dist_a = metric.distance(a, reference);
+		double dist_b = metric.distance(b, reference);
 		return dist_a < dist_b ? -1 : dist_a == dist_b ? 0 : 1;
 	}
 

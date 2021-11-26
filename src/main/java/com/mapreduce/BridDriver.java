@@ -15,6 +15,7 @@ import org.apache.hadoop.util.ToolRunner;
 import com.helpers.ReadDataset;
 import com.mapreduce.grouping.PartitionDistanceGroupingComparator;
 import com.mapreduce.mapper.BasedPivotPartitionMapper;
+import com.mapreduce.mapper.BasedPivotPartitionOverleapMapper;
 import com.mapreduce.mapper.ForwardPartialResultsMapper;
 import com.mapreduce.partitioner.PartitionDistancePartitioner;
 import com.mapreduce.reducer.BridIntermediaryReducer;
@@ -44,12 +45,16 @@ public class BridDriver extends Configured implements Tool {
 			conf.set("K", args[4]);
 			conf.set("number_partitions", args[6]);
 			conf.set("path_file_pivots", args[7]);
-			System.out.println("Iniciando fase de partionamento");
-			System.out.println("Consulta: " + consulta); 
+			conf.set("threshold", args[8]);
+
+			System.out.println("\n");
+			System.out.println("INICIANDO FASE DE PARTIONAMENTO");
+			System.out.println("CONSULTA " + consulta); 
+			System.out.println("\n");
 
 			Job job = Job.getInstance(conf, "Brid_k_phase_one");
 			job.setJarByClass(BridDriver.class);
-			job.setMapperClass(BasedPivotPartitionMapper.class);
+			job.setMapperClass(BasedPivotPartitionOverleapMapper.class);
 			job.setReducerClass(BridIntermediaryReducer.class);
 			job.setPartitionerClass(PartitionDistancePartitioner.class);
 			job.setGroupingComparatorClass(PartitionDistanceGroupingComparator.class);
@@ -66,8 +71,10 @@ public class BridDriver extends Configured implements Tool {
 				System.exit(1);
 			}
 
-			System.out.println("Iniciando fase de refinamento");
-			System.out.println("Consulta: " + consulta); 
+			System.out.println("\n");
+			System.out.println("INICIANDO FASE DE REFINAMENTO");
+			System.out.println("CONSULTA " + consulta); 
+			System.out.println("\n");
 
 			/* Configurações do JOB 2 */
 			Configuration conf2 = new Configuration();
