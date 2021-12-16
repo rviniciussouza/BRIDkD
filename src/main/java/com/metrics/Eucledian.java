@@ -2,7 +2,7 @@ package com.metrics;
 
 import com.types.Tuple;
 
-public class Eucledian implements Metric {
+public class Eucledian extends Metric {
 
 	@Override
 	public double distance(Tuple s, Tuple t) {
@@ -11,6 +11,7 @@ public class Eucledian implements Metric {
 			double diff = s.getAttributes().get(i) - t.getAttributes().get(i);
 			distanceSquare += diff * diff;
 		}
+		this.numberOfCalculations++;
 		return Math.sqrt(distanceSquare);
 	}
 

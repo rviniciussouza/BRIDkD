@@ -3,8 +3,6 @@ package com.mapreduce.mapper;
 import java.io.IOException;
 
 import org.apache.hadoop.io.Text;
-import com.metrics.Eucledian;
-import com.metrics.Metric;
 import com.types.PartitionDistancePair;
 import com.types.Tuple;
 import com.types.TupleWritable;
@@ -15,8 +13,6 @@ import com.types.TupleWritable;
  */
 public class ForwardPartialResultsMapper extends BaseMapper<Object, Text, PartitionDistancePair, TupleWritable> {
 
-	protected Metric metric;
-	
 	@Override
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 		Tuple record = new Tuple();
@@ -29,9 +25,5 @@ public class ForwardPartialResultsMapper extends BaseMapper<Object, Text, Partit
 		reducerKey.setPartition(0);
 		TupleWritable tupleWritable = new TupleWritable(record);
 		context.write(reducerKey, tupleWritable);
-	}
-
-	protected void setMetric() {
-		this.metric = new Eucledian();
 	}
 }

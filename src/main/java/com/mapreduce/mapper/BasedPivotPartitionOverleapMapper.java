@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
-import com.helpers.HDFSRead;
+import com.helpers.ReaderHDFS;
 import com.helpers.ParserTuple;
 import com.types.PartitionDistancePair;
 import com.types.Tuple;
@@ -21,17 +21,17 @@ public class BasedPivotPartitionOverleapMapper extends BaseMapper<Object, Text, 
     @Override
 	protected void setup(Context context) {
 		Configuration conf = context.getConfiguration();
-		this.setFormatData(conf.getStrings("header_dataset"));
+		this.setFormatData(conf.getStrings("format.records"));
 		this.setMetric();
         try {
-            this.setPivots(conf.get("path_file_pivots"));
+            this.setPivots(conf.get("mapper.pivots.file"));
         } catch (IOException e) {
             e.printStackTrace();
         }
         ParserTuple parserQuery = new ParserTuple();
-		this.query = parserQuery.parse(conf.get("query"));
-		this.numberPartitions = conf.getInt("number_partitions", 2);
-        this.threshold = conf.getDouble("threshold", 0.0);
+		this.query = parserQuery.parse(conf.get("brid.query"));
+		this.numberPartitions = conf.getInt("mapper.number.partitions", 2);
+        this.threshold = conf.getDouble("brid.threshold", 0.0);
         this.queryPartition = this.getQueryPartition();
 	}
 
@@ -93,7 +93,7 @@ public class BasedPivotPartitionOverleapMapper extends BaseMapper<Object, Text, 
     private void setPivots(String filePathPivots) throws IOException, IllegalArgumentException {
         this.pivots = new ArrayList<>();
         ParserTuple parserPivots = new ParserTuple();
-        HDFSRead readPivots = new HDFSRead(filePathPivots);
+        ReaderHDFS readPivots = new ReaderHDFS(filePathPivots);
         while(readPivots.hasNextLine()) {
             this.pivots.add(parserPivots.parse(readPivots.nextLine()));
         }

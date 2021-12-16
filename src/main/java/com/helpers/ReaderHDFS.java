@@ -11,25 +11,21 @@ import org.apache.hadoop.fs.Path;
 
 /**
  * Reader HDFS
+ * Ler arquivos contidos no HDFS.
  */
-public class HDFSRead {
+public class ReaderHDFS {
 
-	private Scanner scanner;
-	Path pt; 
+	private Scanner scanner; 
 
 	/**
 	 * @param pathname 
 	 * @throws IOException
 	 * @throws IllegalArgumentException
 	 */
-	public HDFSRead(String pathname) throws IOException, IllegalArgumentException {
-		try {
-			this.pt = new Path("hdfs:" + pathname);
-			FileSystem fs = FileSystem.get(new Configuration());
-			this.scanner = new Scanner(new InputStreamReader(fs.open(pt)));
-		} catch(IOException e) {
-			throw e;
-		}
+	public ReaderHDFS(String pathname) throws IOException, IllegalArgumentException {
+		Path pt = new Path("hdfs:" + pathname);
+		FileSystem fs = FileSystem.get(new Configuration());
+		this.scanner = new Scanner(new InputStreamReader(fs.open(pt)));
 	}
 
 	public String nextLine() throws NoSuchElementException {
@@ -38,5 +34,9 @@ public class HDFSRead {
 
 	public Boolean hasNextLine() {
 		return this.scanner.hasNextLine();
+	}
+
+	public void close() {
+		this.scanner.close();
 	}
 }

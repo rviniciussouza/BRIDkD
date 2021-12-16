@@ -2,6 +2,8 @@ package com.algorithms;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
+
 import com.metrics.Metric;
 import com.types.Tuple;
 
@@ -29,7 +31,10 @@ public class Brid {
         while(result.size() < k && pos < dataset.size()) {
             Tuple s = dataset.get(pos++);
             boolean dominant = true;
-            for(Tuple resultElement : result) {
+            /** Iterate over list result in the reverse order */
+            ListIterator<Tuple> iterator = result.listIterator(result.size());
+            while(iterator.hasPrevious()) {
+                Tuple resultElement = iterator.previous();
                 if(this.isStrongInfluence(resultElement, s, sq)) {
                     dominant = false;
                     break;
