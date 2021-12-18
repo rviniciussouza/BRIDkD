@@ -1,6 +1,5 @@
 package com.mapreduce;
 
-import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
@@ -11,11 +10,10 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-
 import com.helpers.ReaderLocalFileSystem;
 import com.mapreduce.grouping.PartitionDistanceGroupingComparator;
-import com.mapreduce.mapper.BasedPivotPartitionMapper;
 import com.mapreduce.mapper.ForwardPartialResultsMapper;
+import com.mapreduce.mapper.RandomPartitionMapper;
 import com.mapreduce.partitioner.PartitionDistancePartitioner;
 import com.mapreduce.reducer.BridIntermediaryReducer;
 import com.mapreduce.reducer.BridReducer;
@@ -44,22 +42,24 @@ public class BridDriver extends Configured implements Tool {
 			System.out.println("CONSULTA " + consulta); 
 			System.out.println("\n");
 
-			Job job = Job.getInstance(conf, "Brid_k_phase_one");
-			job.setJarByClass(BridDriver.class);
-			job.setMapperClass(BasedPivotPartitionMapper.class);
-			job.setReducerClass(BridIntermediaryReducer.class);
-			job.setPartitionerClass(PartitionDistancePartitioner.class);
-			job.setGroupingComparatorClass(PartitionDistanceGroupingComparator.class);
-			job.setMapOutputKeyClass(PartitionDistancePair.class);
-			job.setMapOutputValueClass(TupleWritable.class);
-			job.setOutputKeyClass(NullWritable.class);
-			job.setOutputValueClass(Text.class);
-            job.setNumReduceTasks(conf.getInt("mapper.number.partitions", 1));
+			/* Configurações do JOB 1 */
+			Configuration confOfPartitioner = getConf();			
+			confOfPartitioner.set("brid.query", query);
+			Job jobPartitioner = Job.getInstance(confOfPartitioner, "FIRST JOB");
+			jobPartitioner.setJarByClass(BridDriver.class);
+			jobPartitioner.setMapperClass(RandomPartitionMapper.class);
+			jobPartitioner.setReducerClass(BridIntermediaryReducer.class);
+			jobPartitioner.setPartitionerClass(PartitionDistancePartitioner.class);
+			jobPartitioner.setGroupingComparatorClass(PartitionDistanceGroupingComparator.class);
+			jobPartitioner.setMapOutputKeyClass(PartitionDistancePair.class);
+			jobPartitioner.setMapOutputValueClass(TupleWritable.class);
+			jobPartitioner.setOutputKeyClass(NullWritable.class);
+			jobPartitioner.setOutputValueClass(Text.class);
+			jobPartitioner.setNumReduceTasks(confOfPartitioner.getInt("mapper.number.partitions", 1));
+			FileInputFormat.addInputPath(jobPartitioner, new Path(args[0]));
+			FileOutputFormat.setOutputPath(jobPartitioner, new Path(args[1] + consulta + "/"));
 
-			FileInputFormat.addInputPath(job, new Path(args[0]));
-			FileOutputFormat.setOutputPath(job, new Path(args[1] + consulta + "/"));
-
-			if (!job.waitForCompletion(true)) {
+			if (!jobPartitioner.waitForCompletion(true)) {
 				System.exit(1);
 			}
 
@@ -69,38 +69,28 @@ public class BridDriver extends Configured implements Tool {
 			System.out.println("\n");
 
 			/* Configurações do JOB 2 */
-			Configuration conf2 = getConf();
-			conf2.set("brid.query", query);
-			// conf2.set("header_dataset", args[3]);
-			// conf2.set("K", args[4]);
-			Job job2 = Job.getInstance(conf2, "Brid_k_phase_final");
-			job2.setJarByClass(BridDriver.class);
-			job2.setMapperClass(ForwardPartialResultsMapper.class);
-			job2.setReducerClass(BridReducer.class);
-			job2.setMapOutputKeyClass(PartitionDistancePair.class);
-			job2.setMapOutputValueClass(TupleWritable.class);
-			job2.setPartitionerClass(PartitionDistancePartitioner.class);
-			job2.setGroupingComparatorClass(PartitionDistanceGroupingComparator.class);
-			job2.setOutputKeyClass(NullWritable.class);
-			job2.setOutputValueClass(Text.class);
-            job2.setNumReduceTasks(1);
-			FileInputFormat.addInputPath(job2, new Path(args[1] + consulta));
-			FileOutputFormat.setOutputPath(job2, new Path(args[2] + consulta));
+			Configuration confOfRefinement = getConf();
+			confOfRefinement.set("brid.query", query);
+			Job jobRefinement = Job.getInstance(confOfRefinement, "SECOND JOB");
+			jobRefinement.setJarByClass(BridDriver.class);
+			jobRefinement.setMapperClass(ForwardPartialResultsMapper.class);
+			jobRefinement.setReducerClass(BridReducer.class);
+			jobRefinement.setMapOutputKeyClass(PartitionDistancePair.class);
+			jobRefinement.setMapOutputValueClass(TupleWritable.class);
+			jobRefinement.setPartitionerClass(PartitionDistancePartitioner.class);
+			jobRefinement.setGroupingComparatorClass(PartitionDistanceGroupingComparator.class);
+			jobRefinement.setOutputKeyClass(NullWritable.class);
+			jobRefinement.setOutputValueClass(Text.class);
+			jobRefinement.setNumReduceTasks(1);
+			FileInputFormat.addInputPath(jobRefinement, new Path(args[1] + consulta));
+			FileOutputFormat.setOutputPath(jobRefinement, new Path(args[2] + consulta));
 
 			/* Aguardando o job completar para apagar os arquivos intermediarios */
-			if (!job2.waitForCompletion(true)) {
+			if (!jobRefinement.waitForCompletion(true)) {
 				System.exit(1);
 			}
 			consulta++;
 		}
 		return 0;
-	}
-
-	public static void deletePathIfExists(Configuration conf, String stepOutputPath) throws IOException {
-		Path path = new Path(stepOutputPath);
-		org.apache.hadoop.fs.FileSystem fs = path.getFileSystem(conf);
-		if (fs.exists(path)) {
-			fs.delete(path, true);
-		}
 	}
 }

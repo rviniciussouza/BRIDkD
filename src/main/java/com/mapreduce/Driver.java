@@ -15,9 +15,12 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import com.helpers.ReaderLocalFileSystem;
 import com.mapreduce.grouping.PartitionDistanceGroupingComparator;
-import com.mapreduce.mapper.BasedPivotPartitionMapper;
+// import com.mapreduce.mapper.BasedPivotPartitionMapper;
+import com.mapreduce.mapper.BasedPivotPartitionOverleapMapper;
+// import com.mapreduce.mapper.BasedPivotPartitionMapper;
 // import com.mapreduce.mapper.BasedPivotPartitionOverleapMapper;
 import com.mapreduce.mapper.ForwardPartialResultsMapper;
+// import com.mapreduce.mapper.RandomPartitionMapper;
 import com.mapreduce.partitioner.PartitionDistancePartitioner;
 import com.mapreduce.reducer.BridIntermediaryReducer;
 import com.mapreduce.reducer.BridReducer;
@@ -34,7 +37,7 @@ public class Driver extends Configured implements Tool {
 	@Override
 	public int run(String[] args) throws Exception {
 		ReaderLocalFileSystem read = new ReaderLocalFileSystem(args[3]);
-		
+		System.out.println("MÉTODO DE PARTICIONAMENTO: BASEADO EM PIVÔ COM SOBREPOSIÇÃO");
 		JobControl jobControl = new JobControl("experiment");
 		for(int consulta = 0; read.hasNextLine(); consulta++) {
 			String query = read.nextLine();
@@ -44,7 +47,7 @@ public class Driver extends Configured implements Tool {
 			confOfPartitioner.set("brid.query", query);
 			Job jobPartitioner = Job.getInstance(confOfPartitioner, "FIRST JOB");
 			jobPartitioner.setJarByClass(Driver.class);
-			jobPartitioner.setMapperClass(BasedPivotPartitionMapper.class);
+			jobPartitioner.setMapperClass(BasedPivotPartitionOverleapMapper.class);
 			jobPartitioner.setReducerClass(BridIntermediaryReducer.class);
 			jobPartitioner.setPartitionerClass(PartitionDistancePartitioner.class);
 			jobPartitioner.setGroupingComparatorClass(PartitionDistanceGroupingComparator.class);
@@ -97,11 +100,4 @@ public class Driver extends Configured implements Tool {
 		return jobControl.getFailedJobList().size() > 0 ? 1 : 0;
 	}
 
-	public static void deletePathIfExists(Configuration conf, String stepOutputPath) throws IOException {
-		Path path = new Path(stepOutputPath);
-		org.apache.hadoop.fs.FileSystem fs = path.getFileSystem(conf);
-		if (fs.exists(path)) {
-			fs.delete(path, true);
-		}
-	}
 }

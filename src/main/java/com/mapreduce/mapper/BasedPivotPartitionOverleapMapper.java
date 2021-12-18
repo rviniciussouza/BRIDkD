@@ -15,7 +15,7 @@ import com.types.TupleWritable;
 public class BasedPivotPartitionOverleapMapper extends BaseMapper<Object, Text, PartitionDistancePair, TupleWritable> {
 
     protected List<Tuple> pivots;
-    protected Double threshold;
+    protected Double threshold = .0;
     protected Integer queryPartition;
     
     @Override
@@ -31,7 +31,7 @@ public class BasedPivotPartitionOverleapMapper extends BaseMapper<Object, Text, 
         ParserTuple parserQuery = new ParserTuple();
 		this.query = parserQuery.parse(conf.get("brid.query"));
 		this.numberPartitions = conf.getInt("mapper.number.partitions", 2);
-        this.threshold = conf.getDouble("brid.threshold", 0.0);
+        this.setThreshold(conf.getInt("brid.factor.f", 1));
         this.queryPartition = this.getQueryPartition();
 	}
 
@@ -124,5 +124,26 @@ public class BasedPivotPartitionOverleapMapper extends BaseMapper<Object, Text, 
             }
         }
         return index_closest_pivot;
+    }
+
+    /**
+     * Define o valor do threshold baseado no fator f passando como argumento
+     * Se o número de pivôs for menor que 2, o threshold será setado para 0
+     * @param f
+     * @throws IllegalArgumentException
+     */
+    public void setThreshold(int f) throws IllegalArgumentException {
+        if(f <= 0) {
+            throw new IllegalArgumentException("O valor do fator f deve ser maior ou igual á 1");
+        }
+        if(this.pivots.size() < 2) this.threshold = 0.0;
+        Double shortest_distance = Double.MAX_VALUE;
+        for(int i = 0; i < this.pivots.size(); i++) {
+            for(int j = i+1; j < this.pivots.size(); j++) {
+                Double cur_distance = this.metric.distance(this.pivots.get(i), this.pivots.get(j));
+                shortest_distance = Double.max(cur_distance, shortest_distance);
+            }
+        }
+        this.threshold = (shortest_distance / (2 * f));
     }
 }
