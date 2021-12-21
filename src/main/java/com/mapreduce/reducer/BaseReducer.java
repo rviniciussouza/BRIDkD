@@ -37,8 +37,10 @@ public abstract class BaseReducer<KeyIN, ValueIN, KeyOUT, ValueOUT>
      */
 	protected void cleanup(Context context) throws IOException, InterruptedException {
 		Configuration conf = context.getConfiguration();
-		WriterHDFS writer = new WriterHDFS(conf.get("experiment.logs.file") + context.getTaskAttemptID());
-		writer.write(Integer.toString(this.metric.numberOfCalculations));
-		writer.close();
+		WriterHDFS writerDistanceCalculations = new WriterHDFS(
+			conf.get("experiment.logs.metric.calls") + context.getTaskAttemptID()
+		);
+		writerDistanceCalculations.write(Integer.toString(this.metric.numberOfCalculations));
+		writerDistanceCalculations.close();
 	}
 }

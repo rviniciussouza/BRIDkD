@@ -12,8 +12,10 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import com.helpers.ReaderLocalFileSystem;
 import com.mapreduce.grouping.PartitionDistanceGroupingComparator;
-import com.mapreduce.mapper.ForwardPartialResultsMapper;
-import com.mapreduce.mapper.RandomPartitionMapper;
+import com.mapreduce.mapper.PivotBasedPartitioning;
+import com.mapreduce.mapper.ForwardPartialResults;
+import com.mapreduce.mapper.PivotBasedOverlappingPartitioning;
+import com.mapreduce.mapper.RandomPartitioning;
 import com.mapreduce.partitioner.PartitionDistancePartitioner;
 import com.mapreduce.reducer.BridIntermediaryReducer;
 import com.mapreduce.reducer.BridReducer;
@@ -31,7 +33,6 @@ public class BridDriver extends Configured implements Tool {
 	public int run(String[] args) throws Exception {
 		ReaderLocalFileSystem read = new ReaderLocalFileSystem(args[3]);
 		Integer consulta = 0;
-		
 		while(read.hasNextLine()) {
 			String query = read.nextLine();
 			/* Configurações do JOB 1 */
@@ -47,7 +48,7 @@ public class BridDriver extends Configured implements Tool {
 			confOfPartitioner.set("brid.query", query);
 			Job jobPartitioner = Job.getInstance(confOfPartitioner, "FIRST JOB");
 			jobPartitioner.setJarByClass(BridDriver.class);
-			jobPartitioner.setMapperClass(RandomPartitionMapper.class);
+			this.setPartitioningMethod(args[4], jobPartitioner);
 			jobPartitioner.setReducerClass(BridIntermediaryReducer.class);
 			jobPartitioner.setPartitionerClass(PartitionDistancePartitioner.class);
 			jobPartitioner.setGroupingComparatorClass(PartitionDistanceGroupingComparator.class);
@@ -73,7 +74,7 @@ public class BridDriver extends Configured implements Tool {
 			confOfRefinement.set("brid.query", query);
 			Job jobRefinement = Job.getInstance(confOfRefinement, "SECOND JOB");
 			jobRefinement.setJarByClass(BridDriver.class);
-			jobRefinement.setMapperClass(ForwardPartialResultsMapper.class);
+			jobRefinement.setMapperClass(ForwardPartialResults.class);
 			jobRefinement.setReducerClass(BridReducer.class);
 			jobRefinement.setMapOutputKeyClass(PartitionDistancePair.class);
 			jobRefinement.setMapOutputValueClass(TupleWritable.class);
@@ -92,5 +93,21 @@ public class BridDriver extends Configured implements Tool {
 			consulta++;
 		}
 		return 0;
+	}
+
+
+	public void setPartitioningMethod(String methodName, Job job) throws IllegalArgumentException{
+		if("PivotBased".equals(methodName)) {
+			job.setMapperClass(PivotBasedPartitioning.class);
+		}
+		else if("PivotBasedOverlapping".equals(methodName)) {
+			job.setMapperClass(PivotBasedOverlappingPartitioning.class);
+		}
+		else if("Random".equals(methodName)) {
+			job.setMapperClass(RandomPartitioning.class);
+		}
+		else {
+			throw new IllegalArgumentException("Médodo de particionamento não definido.");
+		}
 	}
 }

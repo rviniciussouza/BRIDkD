@@ -12,40 +12,48 @@ import com.types.Tuple;
 import com.types.TupleWritable;
 
 
-public class BasedPivotPartitionMapper extends BaseMapper<Object, Text, PartitionDistancePair, TupleWritable> {
+public class PivotBasedPartitioning extends BaseMapper<Object, Text, PartitionDistancePair, TupleWritable> {
 
     List<Tuple> pivots;
 
     @Override
 	protected void setup(Context context) {
-		Configuration conf = context.getConfiguration();
-		this.setFormatData(conf.getStrings("format.records"));
-		ParserTuple parserQuery = new ParserTuple();
-		this.query = parserQuery.parse(conf.get("brid.query"));
-		this.numberPartitions = conf.getInt("mapper.number.partitions", 2);
-		this.setMetric();
+		super.setup(context);
+        Configuration conf = context.getConfiguration();
         try {
             this.setPivots(conf.get("mapper.pivots.file"));
         } catch (IOException e) {
             e.printStackTrace();
+            System.exit(1);
         }
 	}
 
+    /**
+     * Emite um par <chave, valor>, onde a chave corresponde a uma tupla do arquivo de entrada
+     * e o valor corresponde a partição associada ao pivô mais próximo a está tupla.
+     */
     @Override
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-		Tuple record = new Tuple();
-		record = parserRecords.parse(value.toString());
-		Double distance = metric.distance(record, query);
-		record.setDistance(distance);
-		int partitionId = this.getIndexClosestPivot(record);
-		PartitionDistancePair reducerKey = new PartitionDistancePair();
-		reducerKey.setDistance(distance);
-		reducerKey.setPartition(partitionId);
-		TupleWritable tupleWritable = new TupleWritable(record);
-		context.write(reducerKey, tupleWritable);
+		TupleWritable reducerValue = this.createReducerValue(value);
+		this.emitCorePartition(reducerValue, context);
 	}
 
-    private void setPivots(String filePathPivots) throws IOException, IllegalArgumentException {
+    /**
+     * Emite o reducerValue para a partição associada ao pivô mais próximo 
+     * @param reducerValue
+     * @param context
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public void emitCorePartition(TupleWritable reducerValue, Context context) throws IOException, InterruptedException {
+		PartitionDistancePair reducerKey = new PartitionDistancePair();
+		reducerKey.setDistance(reducerValue.getDistance());
+        int corePartitionId = this.getIndexClosestPivot(reducerValue);
+		reducerKey.setPartition(corePartitionId);
+		context.write(reducerKey, reducerValue);
+    }
+
+    protected void setPivots(String filePathPivots) throws IOException, IllegalArgumentException {
         this.pivots = new ArrayList<>();
         ParserTuple parserPivots = new ParserTuple();
         ReaderHDFS readPivots = new ReaderHDFS(filePathPivots);
@@ -54,7 +62,7 @@ public class BasedPivotPartitionMapper extends BaseMapper<Object, Text, Partitio
         }
     }
 
-    private Integer getIndexClosestPivot(Tuple tuple) {
+    protected Integer getIndexClosestPivot(Tuple tuple) {
         Integer index_closest_pivot = 0;
         Double current_distance = Double.MAX_VALUE;
         for(int i = 0; i < this.pivots.size(); i++) {
