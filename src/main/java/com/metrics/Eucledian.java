@@ -21,7 +21,7 @@ public class Eucledian extends Metric {
             / (2 * distance(p0, p1));
 	}
 
-	private Double eucledianSquare(Tuple s, Tuple t) {
+	public double eucledianSquare(Tuple s, Tuple t) {
 		double distanceSquare = 0;
         for(int i = 0; i < s.getAttributes().size(); i++) {
             double diff = s.getAttributes().get(i) - t.getAttributes().get(i);

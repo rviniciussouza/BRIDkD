@@ -2,6 +2,7 @@ package com.helpers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import com.types.Tuple;
 
@@ -34,7 +35,7 @@ public class ParserTuple {
         this.have_desc = have_desc;
     }
 
-    public Tuple parse(String str) throws NullPointerException, NumberFormatException {
+    public Tuple parse(String str) throws IllegalArgumentException, NumberFormatException {
         try {
             StringTokenizer st = new StringTokenizer(str);
             Tuple tuple = new Tuple();
@@ -47,9 +48,9 @@ public class ParserTuple {
             }
             return tuple;
         }
-        catch(NullPointerException nullPointerException) {
+        catch(NoSuchElementException noSuchElementException) {
             System.err.println("A string passada como parâmetro não está no formado esperado.");
-            throw nullPointerException;
+            throw new IllegalArgumentException("A string passada como parâmetro não está no formado esperado.");
         }
         catch(NumberFormatException numberFormatException) {
             System.err.println("Alguns valores da string não podem ser tratados.");

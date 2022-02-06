@@ -19,11 +19,6 @@ public class Tuple {
 	}
 
 	public String asString() {
-		// StringBuilder result = new StringBuilder();
-		// for (Double value : this.attributes) {
-		// 	result.append(" " + value);
-		// }
-		// return result.toString().trim();
 		return Long.toString(this.id);
 	}
 

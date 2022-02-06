@@ -3,6 +3,8 @@ package com.mapreduce.mapper;
 import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
+
+import com.helpers.TupleHelper;
 import com.helpers.WriterHDFS;
 import com.types.PartitionDistancePair;
 import com.types.Tuple;
@@ -12,7 +14,7 @@ import com.types.TupleWritable;
 /**
  * Mapper - Particionamento baseado em pivô com sobreposição
  */
-public final class PivotBasedOverlappingPartitioning extends PivotBasedPartitioning {
+public class PivotBasedOverlappingPartitioning extends PivotBasedPartitioning {
 
     private Double threshold = .0;
     /**
@@ -110,15 +112,8 @@ public final class PivotBasedOverlappingPartitioning extends PivotBasedPartition
         if(f <= 0) {
             throw new IllegalArgumentException("O valor do fator f deve ser maior ou igual á 1");
         }
-        if(this.pivots.size() < 2) this.threshold = 0.0;
-        Double shortest_distance = Double.MAX_VALUE;
-        for(int i = 0; i < this.pivots.size(); i++) {
-            for(int j = i+1; j < this.pivots.size(); j++) {
-                Double cur_distance = this.metric.distance(this.pivots.get(i), this.pivots.get(j));
-                shortest_distance = Double.min(cur_distance, shortest_distance);
-            }
-        }
-        this.threshold = (shortest_distance / (2 * f));
+        double middle = TupleHelper.middleDistance(this.pivots, this.metric);
+        this.threshold = (middle / (2 * f));
     }
 
     public Integer getNumberOfDuplicateElements() {
