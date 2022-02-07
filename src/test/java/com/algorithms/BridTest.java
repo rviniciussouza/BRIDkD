@@ -17,6 +17,10 @@ import org.junit.jupiter.api.Test;
 
 public class BridTest {
     
+    /**
+     * Representação gráfica do exemplo utilizados no teste:
+     *  https://ibb.co/3MFNBDM
+     */
     List<Tuple> points = Arrays.asList(
         new Tuple(Arrays.asList(7.0, 5.0)), /* 0 - B*/ 
         new Tuple(Arrays.asList(8.0, 6.0)), /* 1 - C*/
