@@ -81,7 +81,7 @@ public class PartitionDistancePair implements WritableComparable<PartitionDistan
         return distance;
     } 
 
-    public void setDistance(Double dist) {
+    public void setDistance(double dist) {
         this.distance.set(dist);
     }
 }

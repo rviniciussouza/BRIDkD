@@ -64,10 +64,10 @@ public class PivotBasedPartitioning extends BaseMapper<Object, Text, PartitionDi
 
     protected Integer getIndexClosestPivot(Tuple tuple) {
         Integer index_closest_pivot = 0;
-        Double current_distance = Double.MAX_VALUE;
+        double current_distance = Double.MAX_VALUE;
         for(int i = 0; i < this.pivots.size(); i++) {
             Tuple pivot = pivots.get(i);
-            Double distance = metric.distance(pivot, tuple);
+            double distance = metric.distance(pivot, tuple);
             if(distance < current_distance) {
                 index_closest_pivot = i;
                 current_distance = distance;

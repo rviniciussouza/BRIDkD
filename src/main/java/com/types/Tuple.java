@@ -8,7 +8,7 @@ public class Tuple {
 	protected Long id;
 	protected String description;
 	protected List<Double> attributes;
-	protected Double distance;
+	protected double distance;
 
 	public Tuple() {
 		attributes = new ArrayList<>();
@@ -38,11 +38,11 @@ public class Tuple {
 		this.description = description;
 	}
 
-	public Double getDistance() {
+	public double getDistance() {
 		return distance;
 	}
 
-	public void setDistance(Double distance) {
+	public void setDistance(double distance) {
 		this.distance = distance;
 	}
 
@@ -54,7 +54,7 @@ public class Tuple {
 		return this.attributes;
 	}
 
-	public void addAttribute(Double atr) {
+	public void addAttribute(double atr) {
 		this.attributes.add(atr);
 	}
 
@@ -62,7 +62,7 @@ public class Tuple {
 	public String toString() {
 		StringBuilder result = new StringBuilder();
 		if(this.id != null) result.append(Long.toString(this.id) + "\t");
-		for (Double value : this.attributes) {
+		for (double value : this.attributes) {
 			result.append(value + "\t");
 		}
 		if(this.description != null && !this.description.isEmpty()) result.append(this.description);

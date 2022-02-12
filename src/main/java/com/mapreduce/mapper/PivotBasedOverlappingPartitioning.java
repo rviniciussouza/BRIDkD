@@ -16,7 +16,7 @@ import com.types.TupleWritable;
  */
 public class PivotBasedOverlappingPartitioning extends PivotBasedPartitioning {
 
-    private Double threshold = .0;
+    private double threshold = .0;
     /**
      * Indíce da partição que contém o objeto de consulta
      */
@@ -88,7 +88,7 @@ public class PivotBasedOverlappingPartitioning extends PivotBasedPartitioning {
         Tuple pivot_kernel_t = this.pivots.get(this.getIndexClosestPivot(t));
         Tuple pivot_query_partition = this.pivots.get(this.queryPartition);
         if(!pivot_kernel_t.equals(pivot_query_partition)) {
-            Double hyperplanDist = this.metric.hyperplanDist(pivot_kernel_t, pivot_query_partition, t);
+            double hyperplanDist = this.metric.hyperplanDist(pivot_kernel_t, pivot_query_partition, t);
             return hyperplanDist <= this.threshold;
         }
         return false;

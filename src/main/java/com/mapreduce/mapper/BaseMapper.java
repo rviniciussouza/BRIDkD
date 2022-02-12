@@ -59,7 +59,7 @@ public abstract class BaseMapper<KeyIN, ValueIN, KeyOUT, ValueOUT> extends Mappe
     public TupleWritable createReducerValue(Text value) {
         Tuple record = new Tuple();
 		record = this.parserRecords.parse(value.toString());
-		Double distance = metric.distance(record, query);
+		double distance = metric.distance(record, query);
 		record.setDistance(distance);
         TupleWritable reducerValue = new TupleWritable(record);
         return reducerValue;

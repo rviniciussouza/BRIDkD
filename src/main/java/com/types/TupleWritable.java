@@ -31,7 +31,7 @@ public class TupleWritable extends Tuple implements WritableComparable<TupleWrit
 		out.writeUTF("" + this.description);
 		out.writeDouble(this.distance);
 		out.writeInt(this.attributes.size());
-		for (Double value : this.attributes) {
+		for (double value : this.attributes) {
 			out.writeDouble(value);
 		}
 	}
