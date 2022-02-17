@@ -112,13 +112,8 @@ public class PivotBasedOverlappingPartitioning extends PivotBasedPartitioning {
         if(f <= 0) {
             throw new IllegalArgumentException("O valor do fator f deve ser maior ou igual á 1");
         }
-        double middle = TupleHelper.middleDistance(this.pivots, this.metric);
-        if(this.pivots.size() == 2) {
-            this.threshold = (middle / (double)f);
-        }
-        else {
-            this.threshold = (middle / (2 * (double)f));
-        }
+        double distance = TupleHelper.minimumDistance(this.getQueryPartition(), this.pivots, this.metric);
+        this.threshold = (distance / (2 * (double)f));
     }
 
     public Integer getNumberOfDuplicateElements() {

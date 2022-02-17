@@ -50,9 +50,9 @@ public class ParserTupleTest {
             () -> parserTuple.parse("1 2014 1.6 8 45000 90000")
         );
 
-        System.out.println(thrown.getMessage().contains(
+        thrown.getMessage().contains(
             "A string passada como parâmetro não está no formado esperado."
-        ));
+        );
     }
 
     

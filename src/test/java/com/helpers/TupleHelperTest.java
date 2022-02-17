@@ -1,6 +1,7 @@
 package com.helpers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -35,5 +36,34 @@ public class TupleHelperTest {
         Eucledian metric = Mockito.mock(Eucledian.class);
         double middle = TupleHelper.middleDistance(new ArrayList<>(), metric);
         assertEquals(0, middle);
+    }
+
+    @Test
+    public void minimumDistanceTest() {
+        Eucledian metric = Mockito.mock(Eucledian.class);
+        List<Tuple> points = Arrays.asList(
+                new Tuple(Arrays.asList(0.0, 0.0)),
+                new Tuple(Arrays.asList(0.0, 1.0)),
+                new Tuple(Arrays.asList(0.0, 2.0)));
+        when(metric.distance(points.get(0), points.get(1))).thenReturn(1.0);
+        when(metric.distance(points.get(0), points.get(2))).thenReturn(2.0);
+        double middle = TupleHelper.minimumDistance(0, points, metric);
+        assertEquals(1.0, middle);
+    }
+
+    @Test
+    public void minimumDistanceWithInvalidReference() {
+        Eucledian metric = Mockito.mock(Eucledian.class);
+        List<Tuple> points = Arrays.asList(
+                new Tuple(Arrays.asList(0.0, 0.0))
+        );
+
+        IllegalArgumentException thrown = assertThrows(
+            IllegalArgumentException.class, 
+            () -> TupleHelper.minimumDistance(1, points, metric)
+        );
+        thrown.getMessage().contains(
+            "A referência passada como argumento é invalida"
+        );
     }
 }
