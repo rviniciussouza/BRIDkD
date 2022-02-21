@@ -1,6 +1,6 @@
 package com.metrics;
 
-import com.types.Tuple;
+import com.types.Point;
 
 public abstract class Metric {
 	
@@ -12,7 +12,7 @@ public abstract class Metric {
 	 * @param t
 	 * @return
 	 */
-	public abstract double distance(Tuple s, Tuple t);
+	public abstract double distance(Point s, Point t);
 
 	/**
 	 * Calcula a distância entre o element "t" e o hiperplano generalizado formado entre p0 e p1
@@ -21,5 +21,5 @@ public abstract class Metric {
 	 * @param t
 	 * @return
 	 */
-	public abstract double hyperplanDist(Tuple p0, Tuple p1, Tuple t);
+	public abstract double distHyperplane(Point p0, Point p1, Point t);
 }

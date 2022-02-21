@@ -3,11 +3,19 @@ package com.types;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Tuple {
+public class Tuple extends Point {
 
+	/**
+	 * Identificador
+	 */
 	protected Long id;
+	/**
+	 * Descrição da tupla
+	 */
 	protected String description;
-	protected List<Double> attributes;
+	/**
+	 * Distância entre a tupla e o pivô mais próximo
+	 */
 	protected double distance;
 
 	public Tuple() {
@@ -44,14 +52,6 @@ public class Tuple {
 
 	public void setDistance(double distance) {
 		this.distance = distance;
-	}
-
-	public void setAttributes(List<Double> attributes) {
-		this.attributes = attributes;
-	}
-
-	public List<Double> getAttributes() {
-		return this.attributes;
 	}
 
 	public void addAttribute(double atr) {

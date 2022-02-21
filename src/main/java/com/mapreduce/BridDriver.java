@@ -12,9 +12,9 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import com.helpers.ReaderLocalFileSystem;
 import com.mapreduce.grouping.PartitionDistanceGroupingComparator;
-import com.mapreduce.mapper.PivotBasedPartitioning;
+import com.mapreduce.mapper.PivotBasedMapper;
 import com.mapreduce.mapper.ForwardPartialResults;
-import com.mapreduce.mapper.PivotBasedOverlappingPartitioning;
+import com.mapreduce.mapper.PivotBasedWithSupportMapper;
 import com.mapreduce.mapper.RandomPartitioning;
 import com.mapreduce.partitioner.PartitionDistancePartitioner;
 import com.mapreduce.reducer.BridIntermediaryReducer;
@@ -98,10 +98,10 @@ public class BridDriver extends Configured implements Tool {
 
 	public void setPartitioningMethod(String methodName, Job job) throws IllegalArgumentException{
 		if("PivotBased".equals(methodName)) {
-			job.setMapperClass(PivotBasedPartitioning.class);
+			job.setMapperClass(PivotBasedMapper.class);
 		}
 		else if("PivotBasedOverlapping".equals(methodName)) {
-			job.setMapperClass(PivotBasedOverlappingPartitioning.class);
+			job.setMapperClass(PivotBasedWithSupportMapper.class);
 		}
 		else if("Random".equals(methodName)) {
 			job.setMapperClass(RandomPartitioning.class);

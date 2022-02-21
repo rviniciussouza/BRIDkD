@@ -1,11 +1,11 @@
 package com.metrics;
 
-import com.types.Tuple;
+import com.types.Point;
 
 public class Eucledian extends Metric {
 
 	@Override
-	public double distance(Tuple s, Tuple t) {
+	public double distance(Point s, Point t) {
 		double distanceSquare = 0;
 		for (int i = 0; i < s.getAttributes().size(); i++) {
 			double diff = s.getAttributes().get(i) - t.getAttributes().get(i);
@@ -16,12 +16,12 @@ public class Eucledian extends Metric {
 	}
 
 	@Override
-	public double hyperplanDist(Tuple p0, Tuple p1, Tuple t) {
+	public double distHyperplane(Point p0, Point p1, Point t) {
 		return Math.abs(eucledianSquare(t, p0) - eucledianSquare(t, p1))
             / (2 * distance(p0, p1));
 	}
 
-	public double eucledianSquare(Tuple s, Tuple t) {
+	public double eucledianSquare(Point s, Point t) {
 		double distanceSquare = 0;
         for(int i = 0; i < s.getAttributes().size(); i++) {
             double diff = s.getAttributes().get(i) - t.getAttributes().get(i);

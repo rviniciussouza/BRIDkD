@@ -15,15 +15,13 @@ public class ForwardPartialResults extends BaseMapper<Object, Text, PartitionDis
 
 	@Override
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-		Tuple record = new Tuple();
-		String line = value.toString().trim();
-		record = parserRecords.parse(line);
+		Tuple record = parserRecords.parse(value.toString().trim());
 		double distance = metric.distance(record, query);
 		record.setDistance(distance);
-		PartitionDistancePair reducerKey = new PartitionDistancePair();
-		reducerKey.setDistance(distance);
 		/** Todos os registros (resultados parciais) são encaminhados para um único reducer */
-		reducerKey.setPartition(0);
+		PartitionDistancePair reducerKey = new PartitionDistancePair(
+			0, distance
+		);
 		TupleWritable tupleWritable = new TupleWritable(record);
 		context.write(reducerKey, tupleWritable);
 	}

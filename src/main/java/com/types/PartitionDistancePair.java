@@ -20,6 +20,11 @@ public class PartitionDistancePair implements WritableComparable<PartitionDistan
 
     public PartitionDistancePair(){};
 
+    public PartitionDistancePair(int partition, double distance){
+        this.partition.set(partition);
+        this.distance.set(distance);
+    };
+
     @Override
     public void write(DataOutput out) throws IOException {
         partition.write(out);

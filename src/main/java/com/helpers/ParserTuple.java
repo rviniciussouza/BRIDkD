@@ -11,39 +11,39 @@ import com.types.Tuple;
  * seguindo o formado definido.
  */
 public class ParserTuple {
-    private Integer dimension;
-    private Boolean have_id;
-    private Boolean have_desc;
+    private int dimension;
+    private boolean hasId;
+    private boolean hasDesc;
     
     /**
      * Trata todos os valores como atributos
      */
     public ParserTuple() {
         this.dimension = -1;
-        this.have_id = false;
-        this.have_desc = false;
+        this.hasId = false;
+        this.hasDesc = false;
     }
 
     /**
      * @param dimension Numero de atributos do registro
-     * @param have_id Determina se o primeiro valor é um identificador
-     * @param have_desc Determina se os ultimos valores é uma descrição do registro
+     * @param hasId Determina se o primeiro valor é um identificador
+     * @param hasDesc Determina se os ultimos valores é uma descrição do registro
      */
-    public ParserTuple(Integer dimension, Boolean have_id, Boolean have_desc) {
+    public ParserTuple(int dimension, boolean hasId, boolean hasDesc) {
         this.dimension = dimension;
-        this.have_id = have_id;
-        this.have_desc = have_desc;
+        this.hasId = hasId;
+        this.hasDesc = hasDesc;
     }
 
     public Tuple parse(String str) throws IllegalArgumentException, NumberFormatException {
         try {
             StringTokenizer st = new StringTokenizer(str);
             Tuple tuple = new Tuple();
-            if (this.have_id) {
+            if (this.hasId) {
                 tuple.setId(Integer.parseInt(st.nextToken()));
             }
             tuple.setAttributes(this.parseAttributes(st));
-            if (this.have_desc) {
+            if (this.hasDesc) {
                 tuple.setDescription(st.nextToken("\n"));
             }
             return tuple;
