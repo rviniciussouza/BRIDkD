@@ -10,7 +10,7 @@ import com.types.PartitionDistancePair;
 import com.types.Tuple;
 import com.types.TupleWritable;
 
-public class BridReducer extends BaseReducer<PartitionDistancePair, TupleWritable, NullWritable, Text> {
+public class RefinementReducer extends BaseReducer<PartitionDistancePair, TupleWritable, NullWritable, Text> {
 
 	@Override
 	public void reduce(PartitionDistancePair key, Iterable<TupleWritable> values, Context context)
@@ -25,7 +25,7 @@ public class BridReducer extends BaseReducer<PartitionDistancePair, TupleWritabl
 			copy.setAttributes(tuple.getAttributes());
 			dataset.add(copy);
 		}
-		Brid brid = new Brid(dataset, this.metric);
+		Brid<Tuple> brid = new Brid<>(dataset, this.metric);
 		List<Tuple> result = brid.search(this.query, this.K);
 
 		Text attrs = new Text();

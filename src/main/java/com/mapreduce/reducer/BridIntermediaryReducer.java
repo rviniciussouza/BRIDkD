@@ -24,7 +24,7 @@ public class BridIntermediaryReducer extends BaseReducer<PartitionDistancePair, 
 			copy.setAttributes(tuple.getAttributes());
 			dataset.add(copy);
 		}
-		Brid brid = new Brid(dataset, this.metric);
+		Brid<Tuple> brid = new Brid<>(dataset, this.metric);
 		List<Tuple> result = brid.search(this.query, this.K);
 		for (Tuple tuple : result) {
 			Text saida = new Text(tuple.toString());

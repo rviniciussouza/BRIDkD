@@ -5,18 +5,18 @@ import java.util.List;
 import java.util.ListIterator;
 
 import com.metrics.Metric;
-import com.types.Tuple;
+import com.types.Point;
 
 /**
  * Implementação do algoritmo BRIDk.
  * Dado um conjunto de dados de entrada e um objeto de consulta sq, esse algoritmo
  * retorna o k vizinhos diversificados do objeto de consulta. 
  */
-public class Brid {
+public class Brid<T extends Point> {
 	Metric metric;
-	List<Tuple> dataset;
+	List<T> dataset;
 
-	public Brid(List<Tuple> dataset, Metric metric) {
+	public Brid(List<T> dataset, Metric metric) {
 		this.dataset = dataset;
 		this.metric = metric;
 	}
@@ -25,52 +25,58 @@ public class Brid {
 		this.metric = metric;
 	}
 
-	public List<Tuple> search(Tuple sq, int k) {
-		List<Tuple> result = new ArrayList<>();
+    /**
+     * Search for k diversified nearest neighbors
+     */
+	public List<T> search(T query, int k) {
+		List<T> result = new ArrayList<>();
         int pos = 0;
         while(result.size() < k && pos < dataset.size()) {
-            Tuple s = dataset.get(pos++);
-            boolean dominant = true;
-            /** Iterate over list result in the reverse order */
-            ListIterator<Tuple> iterator = result.listIterator(result.size());
-            while(iterator.hasPrevious()) {
-                Tuple resultElement = iterator.previous();
-                if(this.isStrongInfluence(resultElement, s, sq)) {
-                    dominant = false;
-                    break;
-                }
-            }
-            if(dominant) {
-                result.add(s);
+            T candidate = dataset.get(pos++);
+            if(notInfluenced(candidate, query, result)) {
+                result.add(candidate);
             }
         }
         return result;
 	}
 
-	public double influenceLevel(Tuple s, Tuple t) {
+    /**
+     * Compute the level of influence "s" exerts on "t"
+     */
+	public double influenceLevel(T s, T t) {
 		double dist = metric.distance(s, t);
-		if (dist == 0) return Double.MAX_VALUE;
-		return (1 / dist);
+		return (dist == 0 ? Double.MAX_VALUE : (1 / dist));
 	}
 
-	public List<Tuple> strongInfluenceSet(Tuple s, Tuple sq) {
-		List<Tuple> set = new ArrayList<>();
-        for(Tuple element : this.dataset) {
-            if(this.isStrongInfluence(s, element, sq)) {
-                set.add(element);
+    /**
+     * Check that the candidate object is not influenced
+     * by any other object in the response set.
+     */
+    public boolean notInfluenced(T candidate, T query, List<T> resultSet) {
+        /** Iterate over list resultSet in the reverse order */
+        boolean ans = true;
+        ListIterator<T> iterator = resultSet.listIterator(resultSet.size());
+        while(iterator.hasPrevious()) {
+            T resultElement = iterator.previous();
+            if(this.isStrongInfluence(resultElement, candidate, query)) {
+                ans = false;
+                break;
             }
         }
-        return set;
-	}
+        return ans;
+    }
 
-	public Boolean isStrongInfluence(Tuple s, Tuple t, Tuple sq) {
-		double influence_s_to_sq = this.influenceLevel(s, sq);
+    /**
+     * Computes whether "s" is a strong influence on "t" with respect to "query"
+     */
+	public Boolean isStrongInfluence(T s, T t, T query) {
+		double influence_s_to_query = this.influenceLevel(s, query);
         double influence_s_to_t = this.influenceLevel(s, t);
-        double influence_sq_to_t = this.influenceLevel(sq, t);
+        double influence_query_to_t = this.influenceLevel(query, t);
 
         return (
-            influence_s_to_t >= influence_s_to_sq
-            && influence_s_to_t >= influence_sq_to_t
+            influence_s_to_t >= influence_s_to_query
+            && influence_s_to_t >= influence_query_to_t
         );
 	}
 

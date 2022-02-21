@@ -18,7 +18,7 @@ import com.mapreduce.mapper.PivotBasedWithSupportMapper;
 import com.mapreduce.mapper.RandomPartitioning;
 import com.mapreduce.partitioner.PartitionDistancePartitioner;
 import com.mapreduce.reducer.BridIntermediaryReducer;
-import com.mapreduce.reducer.BridReducer;
+import com.mapreduce.reducer.RefinementReducer;
 import com.types.PartitionDistancePair;
 import com.types.TupleWritable;
 
@@ -75,7 +75,7 @@ public class BridDriver extends Configured implements Tool {
 			Job jobRefinement = Job.getInstance(confOfRefinement, "SECOND JOB");
 			jobRefinement.setJarByClass(BridDriver.class);
 			jobRefinement.setMapperClass(ForwardPartialResults.class);
-			jobRefinement.setReducerClass(BridReducer.class);
+			jobRefinement.setReducerClass(RefinementReducer.class);
 			jobRefinement.setMapOutputKeyClass(PartitionDistancePair.class);
 			jobRefinement.setMapOutputValueClass(TupleWritable.class);
 			jobRefinement.setPartitionerClass(PartitionDistancePartitioner.class);
