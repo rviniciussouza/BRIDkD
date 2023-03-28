@@ -1,6 +1,3 @@
-Adding result diversification to kNN-based joins in a Map-Reduce framework
-
-
 # P-BRID and SP-BRID result diversification algorithms in a Map-Reduce framework
 
 **This repository contains the source code to the implementation reported in the manuscript _Adding result diversification to kNN-based joins in a Map-Reduce framework_, submitted to the 34th DEXA conference.**
