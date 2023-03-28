@@ -2,4 +2,5 @@
 target/**
 *.jar
 .idea/
+.settings/
 /target/
